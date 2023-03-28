@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { addToDb, getShoppingCart } from '../../utilities/fakedb';
 import Cart from '../cart/Cart';
 import Products from '../product/Products';
 import'./Shop.css';
@@ -12,6 +13,36 @@ const Shop = () => {
         .then(data=>setProducts(data))
 
     },[])
+    // local storage a bosanur jonno..
+    useEffect(()=>{
+        // console.log(products);
+        const storedCart=getShoppingCart();
+        const savedCart=[];
+        console.log(storedCart)
+        // step 1 get id..
+        for(const id in storedCart){
+        //  console.log(id);
+        // set 2 get the product by using id
+        const addedProduct=products.find(product=>product.id===id);
+
+        
+        // step 3 get quintity using id..if condition jodi na dei tahole error kaye jai karon
+        // quintity holo akta empty arry tai if diye condition check kora hoi.
+        if(addedProduct){
+            const quantity=storedCart[id];
+            addedProduct.quantity=quantity
+            console.log(addedProduct)
+            // step 4 add the addedproduct to the saved cart..
+            savedCart.push(addedProduct)
+        }
+       
+
+        
+
+        }
+        // step 5.set the cart
+        setCart(savedCart)
+    },[products])
     // button ar result jano dekai se jonnno state declear korte hobe..
     const [cart,setCart]=useState([])
     
@@ -23,6 +54,8 @@ const Shop = () => {
         // state ar joono..
         const newCart=[...cart,product]
         setCart(newCart)
+        // local storage ar rakar jonno
+        addToDb(product.id)
     }
     return (
         // step:1..akta div ar vitor duita div diye cls dici jate style kora jai..
